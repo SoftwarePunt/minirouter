@@ -9,6 +9,9 @@ use SoftwarePunt\MiniRouter\MiniRouter;
 
 class RouterTest extends TestCase
 {
+    // -----------------------------------------------------------------------------------------------------------------
+    // Core tests
+
     public function testMissingHostHeader400()
     {
         $router = new MiniRouter();
@@ -100,6 +103,21 @@ class RouterTest extends TestCase
             "dispatch() should return implementation response body (based on variable request)");
     }
 
+    public function testDependencyInjection()
+    {
+        $router = new MiniRouter();
+
+        $router->register('/callable-route/$urlVar', function (string $badVar, string $urlVar, RequestInterface $nonReqVarName, int $someOtherVar = 123) {
+            $this->assertEmpty($badVar, "Default value for unmapped variable should be empty string");
+            $this->assertSame("var-input-val", $urlVar, "Specific value for URL mapped variable should be passed");
+            $this->assertInstanceOf(RequestInterface::class, $nonReqVarName, "Request should be injected even if var name is inconsistent");
+            $this->assertSame(123, $someOtherVar, "Default value for non-context variable should be passed");
+        });
+
+        $request = new Request("GET", "https://somehost.com/callable-route/var-input-val");
+        $router->dispatch($request);
+    }
+
     // -----------------------------------------------------------------------------------------------------------------
     // Code samples from docs
 
@@ -135,12 +153,12 @@ class RouterTest extends TestCase
     {
         $router = new MiniRouter();
 
-        $router->register('/echo/$myUrlVar', function (string $myUrlVar) {
-            return "echo: {$myUrlVar}";
+        $router->register('/echo/$myUrlVar/$varTwo', function (string $myUrlVar, string $varTwo) {
+            return "echo: {$myUrlVar} - {$varTwo}";
         });
 
-        $response = $router->dispatch(new Request("GET", "https://somehost.com/echo/my_var_value"));
+        $response = $router->dispatch(new Request("GET", "https://somehost.com/echo/my_var_value/var2val"));
 
-        $this->assertSame("echo: my_var_value", (string)$response->getBody());
+        $this->assertSame("echo: my_var_value - var2val", (string)$response->getBody());
     }
 }

@@ -226,6 +226,19 @@ class MiniRouter
                 $filteredVars[$paramName] = $contextVars['request'];
                 continue;
             }
+
+            // Fallback: we cannot provide a value, try default
+            if ($rfParam->isDefaultValueAvailable()) {
+                $filteredVars[$paramName] = $rfParam->getDefaultValue();
+            } else if ($rfParam->getType()->allowsNull()) {
+                $filteredVars[$paramName] = null;
+            } else {
+                switch ($rfParam->getType()->getName()) {
+                    case "string":
+                        $filteredVars[$paramName] = "";
+                        break;
+                }
+            }
         }
 
         return $filteredVars;

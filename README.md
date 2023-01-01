@@ -1,5 +1,9 @@
 # MiniRouter
-**A fast and lightweight request-response router for PHP, compatible with [PSR-7](https://www.php-fig.org/psr/psr-7/).**
+**A fast and lightweight router for PHP, compatible with [PSR-7](https://www.php-fig.org/psr/psr-7/):**
+
+- ⏩ Super fast request-response routing
+- 🌟 Static or dynamic routes with unlimited URL variables
+- 💉 Automatic parameter injection for requests and route variables
 
 ## Installation
 Install the package using [Composer](https://getcomposer.org/):
@@ -7,6 +11,8 @@ Install the package using [Composer](https://getcomposer.org/):
 ```bash
 composer require softwarepunt/minirouter
 ```
+
+This package is compatible with PHP 8.2+.
 
 ## Usage
 
@@ -48,13 +54,15 @@ $router->register('/show-user-agent', function (RequestInterface $request) {
 });
 ```
 
+The request object will be injected automatically. The name and order of the parameter doesn't matter.
+
 ### Routes with variables
-When you register your routes, you can also use variables:
+When you register your routes, you can also use one or more URL variables that can then be injected into your target function:
 
 ```php
-$router->register('/echo/$myUrlVar', function (string $myUrlVar) {
-    return "echo: {$myUrlVar}";
+$router->register('/echo/$myUrlVar/$varTwo', function (string $myUrlVar, string $varTwo) {
+    return "echo: {$myUrlVar} - {$varTwo}";
 });
 ```
 
-The variable name in your route definition will be passed as a named argument (string) to your target function, where you can access it directly.
+Variables are defined in the route by using the `$` prefix. Their values are automatically extracted from the request URL, and injected into your target function as named parameters (strings).
