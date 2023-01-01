@@ -9,7 +9,7 @@ class FallbackResponse implements ResponseInterface
 {
     private int $statusCode;
     private string $reasonPhrase;
-    private ?string $body;
+    private FallbackStringStream $body;
     private string $protocolVersion;
     private array $headers;
 
@@ -17,7 +17,7 @@ class FallbackResponse implements ResponseInterface
     {
         $this->statusCode = $statusCode;
         $this->reasonPhrase = $reasonPhrase;
-        $this->body = $body;
+        $this->body = new FallbackStringStream($body);
         $this->protocolVersion = "1.1";
         $this->headers = [];
     }
@@ -84,7 +84,7 @@ class FallbackResponse implements ResponseInterface
     public function withBody(StreamInterface $body)
     {
         $instance = clone $this;
-        $instance->body = $body->__toString();
+        $instance->body = new FallbackStringStream($body->__toString());
         return $instance;
     }
 

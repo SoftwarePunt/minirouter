@@ -56,6 +56,25 @@ class RouterTest extends TestCase
             "dispatch() should return implementation response body");
     }
 
+    public function testCallableStringReturnPingPong()
+    {
+        $router = new MiniRouter();
+
+        $router->register("/ping", function (RequestInterface $request) {
+            return "pong";
+        });
+
+        $request = new Request("GET", "https://somehost.com/ping");
+        $response = $router->dispatch($request);
+
+        $this->assertInstanceOf(ResponseInterface::class, $response,
+            "dispatch() should always return a ResponseInterface");
+        $this->assertSame(200, $response->getStatusCode(),
+            "dispatch() should return 200 (OK) for string return");
+        $this->assertSame("pong", $response->getBody()->__toString(),
+            "dispatch() should return string return in response body");
+    }
+
     public function testVariableCallableRouting()
     {
         $router = new MiniRouter();
