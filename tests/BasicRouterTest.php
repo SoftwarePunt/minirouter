@@ -7,7 +7,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use SoftwarePunt\MiniRouter\MiniRouter;
 
-class RouterTest extends TestCase
+class BasicRouterTest extends TestCase
 {
     // -----------------------------------------------------------------------------------------------------------------
     // Core tests
@@ -107,8 +107,7 @@ class RouterTest extends TestCase
     {
         $router = new MiniRouter();
 
-        $router->register('/callable-route/$urlVar', function (string $badVar, string $urlVar, RequestInterface $nonReqVarName, int $someOtherVar = 123) {
-            $this->assertEmpty($badVar, "Default value for unmapped variable should be empty string");
+        $router->register('/callable-route/$urlVar', function (string $urlVar, RequestInterface $nonReqVarName, int $someOtherVar = 123) {
             $this->assertSame("var-input-val", $urlVar, "Specific value for URL mapped variable should be passed");
             $this->assertInstanceOf(RequestInterface::class, $nonReqVarName, "Request should be injected even if var name is inconsistent");
             $this->assertSame(123, $someOtherVar, "Default value for non-context variable should be passed");

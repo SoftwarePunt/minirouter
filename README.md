@@ -66,3 +66,38 @@ $router->register('/echo/$myUrlVar/$varTwo', function (string $myUrlVar, string 
 ```
 
 Variables are defined in the route by using the `$` prefix. Their values are automatically extracted from the request URL, and injected into your target function as named parameters (strings).
+
+### Routing to (controller) classes
+You can also register routes that will construct a class instance, and invoke a specific method. This can help you organize your code, and is more typical for a model-view-controller (MVC) architecture.
+
+```php
+<?php
+
+use SoftwarePunt\MiniRouter\MiniRouter;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+
+$router = new MiniRouter();
+$router->registerController('/greet/$name', SomeControllerClass::class, "targetMethod");
+
+class SomeControllerClass
+{
+    public function before(RequestInterface $request): ?ResponseInterface
+    {
+        // This method will be called *before* routing to the target method
+        // You can access the request and other variables here
+        if (!exampleAuthCheck())
+            return new Response(403, body: "Access denied!");
+        // If before() returns a response, routing is aborted and that response is returned
+        // This is a good place to handle things like pre-flight checks and authentication
+        return null;
+    }
+
+    public function targetMethod(string $name): ResponseInterface
+    {
+        return new Response(200, body: "Hello, {$name}!");
+    }
+}
+```
+
+You can use the optional `before` method to perform pre-flight checks and run common code - for example, to handle authentication before allowing routing to proceed.

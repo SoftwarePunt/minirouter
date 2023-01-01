@@ -5,6 +5,7 @@ namespace SoftwarePunt\MiniRouter;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use SoftwarePunt\MiniRouter\HTTP\FallbackResponse;
+use Technically\CallableReflection\CallableReflection;
 
 /**
  * Manages the registration of routes and dispatching of HTTP requests to responses.
@@ -41,10 +42,10 @@ class MiniRouter
      * Register a new route to a callable.
      *
      * @param string $path The path of the request URI, optionally with variables, e.g. "/user/$id/edit".
-     * @param callable $callable
+     * @param callable|array $callable
      * @return $this
      */
-    public function register(string $path, callable $callable): self
+    public function register(string $path, callable|array $callable): self
     {
         $pathParts = explode('/', $path);
         array_shift($pathParts); // First item in path parts should be an empty string because of the "/"
@@ -151,7 +152,7 @@ class MiniRouter
 
         // "before" call on controller
         if (is_array($targetCall) && ($beforeCall = [$targetCall[0], 'before']) && is_callable($beforeCall)) {
-            $beforeResult = call_user_func_array($beforeCall, self::filterContextVars($targetCall, $contextVars));
+            $beforeResult = call_user_func_array($beforeCall, self::filterContextVars($beforeCall, $contextVars));
             if ($beforeResult instanceof ResponseInterface) {
                 // The before function returned an early response, do not proceed
                 return $beforeResult;
@@ -208,8 +209,8 @@ class MiniRouter
     {
         $filteredVars = [];
 
-        $rfFunction = new \ReflectionFunction($target);
-        $rfParams = $rfFunction->getParameters();
+        $rfCallable = CallableReflection::fromCallable($target);
+        $rfParams = $rfCallable->getParameters();
 
         foreach ($rfParams as $rfParam) {
             $paramName = $rfParam->getName();
@@ -220,24 +221,11 @@ class MiniRouter
                 continue;
             }
 
-            $paramType = $rfParam->getType()->getName();
+            $paramType = ($rfParam->getTypes()[0] ?? null)?->getType();
             if ($paramType === "Psr\Http\Message\RequestInterface") {
                 // Match by type (request only)
                 $filteredVars[$paramName] = $contextVars['request'];
                 continue;
-            }
-
-            // Fallback: we cannot provide a value, try default
-            if ($rfParam->isDefaultValueAvailable()) {
-                $filteredVars[$paramName] = $rfParam->getDefaultValue();
-            } else if ($rfParam->getType()->allowsNull()) {
-                $filteredVars[$paramName] = null;
-            } else {
-                switch ($rfParam->getType()->getName()) {
-                    case "string":
-                        $filteredVars[$paramName] = "";
-                        break;
-                }
             }
         }
 

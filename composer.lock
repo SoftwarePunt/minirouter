@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9580e4abde0313810b9884e46627c184",
+    "content-hash": "ad085c624693422cb1713c97e5518aa0",
     "packages": [
         {
             "name": "psr/http-message",
@@ -58,6 +58,49 @@
                 "source": "https://github.com/php-fig/http-message/tree/master"
             },
             "time": "2016-08-06T14:39:51+00:00"
+        },
+        {
+            "name": "technically/callable-reflection",
+            "version": "0.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/technically-php/callable-reflection.git",
+                "reference": "2c7893341954aa7e28b95ef91ecaf4618251f4e7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/technically-php/callable-reflection/zipball/2c7893341954aa7e28b95ef91ecaf4618251f4e7",
+                "reference": "2c7893341954aa7e28b95ef91ecaf4618251f4e7",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1|^8.0"
+            },
+            "require-dev": {
+                "peridot-php/peridot": "^1.19"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Technically\\CallableReflection\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ivan Voskoboinyk",
+                    "email": "ivan@voskoboinyk.com"
+                }
+            ],
+            "description": "A handy library to simplify reflecting any callable or constructor. PHP8-ready!",
+            "support": {
+                "issues": "https://github.com/technically-php/callable-reflection/issues",
+                "source": "https://github.com/technically-php/callable-reflection/tree/0.4.0"
+            },
+            "time": "2021-04-21T14:36:27+00:00"
         }
     ],
     "packages-dev": [
