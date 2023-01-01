@@ -19,8 +19,8 @@ Initialize a new instance of `MiniRouter` and start registering routes:
 use SoftwarePunt\MiniRouter\MiniRouter;
 
 $router = new MiniRouter();
-$router->register("/ping", function () {
-    return "pong";
+$router->register('/ping', function () {
+    return 'pong';
 });
 
 ```
@@ -33,8 +33,28 @@ Once your routes are registered, pass your request object (any PSR-7 compatible 
 $response = $router->dispatch($request);
 ```
 
-This call will always return a PSR-7 compatible `ResponseInterface`.
+This call will return a PSR-7 compatible `ResponseInterface`.
 
-If a matching route is found, your target function will be executed and its response will be returned. Your functions can return their own response object, or a string that will be served as a 200 OK response.
+If a matching route is found, your target function will be executed and its response will be returned. It can return its own response object, or a string.
 
-If there's a problem with the request, if the route was not found, or if your target function did not return anything, an error response is returned instead.
+### Accessing the request
+When your target function is called, you can ask for an instance of `RequestInterface` to access the request directly:
+
+```php
+use Psr\Http\Message\RequestInterface;
+
+$router->register('/show-user-agent', function (RequestInterface $request) {
+    return "Your user agent is: {$request->getHeaderLine('User-Agent')}";
+});
+```
+
+### Routes with variables
+When you register your routes, you can also use variables:
+
+```php
+$router->register('/echo/$myUrlVar', function (string $myUrlVar) {
+    return "echo: {$myUrlVar}";
+});
+```
+
+The variable name in your route definition will be passed as a named argument (string) to your target function, where you can access it directly.

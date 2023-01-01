@@ -47,12 +47,15 @@ class FallbackResponse implements ResponseInterface
     public function getHeader($name)
     {
         $caseMapping = array_change_key_case($this->headers, CASE_LOWER);
-        return $caseMapping[strtolower($name)] ?? null;
+        $value = $caseMapping[strtolower($name)] ?? null;
+        if ($value)
+            return [0 => $value];
+        return [];
     }
 
     public function getHeaderLine($name)
     {
-        return $this->getHeader($name);
+        return $this->getHeader($name)[0] ?? null;
     }
 
     public function withHeader($name, $value)

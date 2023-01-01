@@ -141,32 +141,28 @@ class MiniRouter
         }
 
         // Route
-        $_variables = ['request' => $request];
-        $callable = $this->route($request->getUri()->getPath(), $_variables);
+        $contextVars = ['request' => $request];
+        $targetCall = $this->route($request->getUri()->getPath(), $contextVars);
 
-        if (!$callable) {
+        if (!$targetCall) {
             // No route found, 404
             return new FallbackResponse(404, "Not Found");
         }
 
-        $isControllerCall = is_array($callable);
-        if ($isControllerCall) {
-            // "before" call on controller
-            $beforeCallable = [$callable[0], 'before'];
-            if (is_callable($beforeCallable)) {
-                $beforeResult = call_user_func_array($beforeCallable, [$request]);
-                if ($beforeResult instanceof ResponseInterface) {
-                    // The before function returned an early response, do not proceed
-                    return $beforeResult;
-                } else if ($beforeResult === false) {
-                    // The before function returned false, abort execution (generic fallback)
-                    return new FallbackResponse(500, "Controller precondition failed");
-                }
+        // "before" call on controller
+        if (is_array($targetCall) && ($beforeCall = [$targetCall[0], 'before']) && is_callable($beforeCall)) {
+            $beforeResult = call_user_func_array($beforeCall, self::filterContextVars($targetCall, $contextVars));
+            if ($beforeResult instanceof ResponseInterface) {
+                // The before function returned an early response, do not proceed
+                return $beforeResult;
+            } else if ($beforeResult === false) {
+                // The before function returned false, abort execution (generic fallback)
+                return new FallbackResponse(500, "Controller precondition failed");
             }
         }
 
         // Execute
-        $result = call_user_func_array($callable, $_variables);
+        $result = call_user_func_array($targetCall, self::filterContextVars($targetCall, $contextVars));
         if ($result instanceof ResponseInterface) {
             // The target function returned a response of its own
             return $result;
@@ -206,5 +202,32 @@ class MiniRouter
             throw new \RuntimeException("Route target method does not exist: {$controllerClass}->{$methodName}");
 
         return [$controllerInstance, $methodName];
+    }
+
+    private static function filterContextVars(callable $target, array $contextVars): array
+    {
+        $filteredVars = [];
+
+        $rfFunction = new \ReflectionFunction($target);
+        $rfParams = $rfFunction->getParameters();
+
+        foreach ($rfParams as $rfParam) {
+            $paramName = $rfParam->getName();
+
+            if (isset($contextVars[$paramName])) {
+                // Match by name
+                $filteredVars[$paramName] = $contextVars[$paramName];
+                continue;
+            }
+
+            $paramType = $rfParam->getType()->getName();
+            if ($paramType === "Psr\Http\Message\RequestInterface") {
+                // Match by type (request only)
+                $filteredVars[$paramName] = $contextVars['request'];
+                continue;
+            }
+        }
+
+        return $filteredVars;
     }
 }
