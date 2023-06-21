@@ -110,3 +110,45 @@ class SomeControllerClass
 ```
 
 You can use the optional `before` method to perform pre-flight checks and run common code - for example, to handle authentication before allowing routing to proceed.
+
+## Examples
+
+### Complete `index.php`
+
+```php
+<?php
+
+use MyProject\HomeController;
+use GuzzleHttp\Psr7\ServerRequest;
+use SoftwarePunt\MiniRouter\MiniRouter;
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Init
+
+require_once "../bootstrap.php";
+
+$router = new MiniRouter();
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Routes
+
+$router->registerController('/', HomeController::class, 'serveHome');
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Main
+
+$request = ServerRequest::fromGlobals();
+$response = $router->dispatch($request);
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Serve
+
+foreach ($response->getHeaders() as $name => $values) {
+    foreach ($values as $value) {
+        header(sprintf('%s: %s', $name, $value), false);
+    }
+}
+
+echo $response->getBody()->getContents();
+exit(0);
+```
