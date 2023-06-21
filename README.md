@@ -31,6 +31,15 @@ $router->register('/ping', function () {
 
 ```
 
+### Incoming requests (PSR-7)
+You will need a [PSR-7 implementation](https://packagist.org/providers/psr/http-message-implementation), such as [`guzzlehttp/psr7`](https://packagist.org/packages/guzzlehttp/psr7), to provide incoming request data. For example:
+
+```php
+use GuzzleHttp\Psr7\ServerRequest;
+
+$request = ServerRequest::fromGlobals();
+```
+
 ### Dispatching requests
 
 Once your routes are registered, pass your request object (any PSR-7 compatible `RequestInterface`) to the router:
