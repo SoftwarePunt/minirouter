@@ -111,6 +111,16 @@ class SomeControllerClass
 
 You can use the optional `before` method to perform pre-flight checks and run common code - for example, to handle authentication before allowing routing to proceed.
 
+### Simple redirects
+You can also use the `registerRedirect` utility function to quickly register HTTP 301 or 302 redirects:
+
+```php
+// 301 Moved Permanently
+$router->registerRedirect('/from', '/to', true);
+// 302 Found (Temporary redirect) 
+$router->registerRedirect('/from', '/to');
+```
+
 ## Examples
 
 ### Complete `index.php`

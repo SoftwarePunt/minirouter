@@ -117,6 +117,38 @@ class BasicRouterTest extends TestCase
         $router->dispatch($request);
     }
 
+    public function test302Redirect()
+    {
+        $router = new MiniRouter();
+        $router->registerRedirect('/one/$somevar', '/two');
+
+        $request = new Request("GET", "https://somehost.com/one/blabla");
+        $response = $router->dispatch($request);
+
+        $this->assertEquals(302, $response->getStatusCode(),
+            "Default redirect should result in HTTP 302 redirect");
+        $this->assertEquals("Found", $response->getReasonPhrase(),
+            "Default redirect should result in Found redirect");
+        $this->assertEquals("/two", $response->getHeaderLine('Location'),
+            "Redirect URL should match");
+    }
+
+    public function test301Redirect()
+    {
+        $router = new MiniRouter();
+        $router->registerRedirect('/one/$somevar', '/two', true);
+
+        $request = new Request("GET", "https://somehost.com/one/blabla");
+        $response = $router->dispatch($request);
+
+        $this->assertEquals(301, $response->getStatusCode(),
+            "Permanent redirect should result in HTTP 301 redirect");
+        $this->assertEquals("Moved Permanently", $response->getReasonPhrase(),
+            "Permanent redirect should result in Moved Permanently redirect");
+        $this->assertEquals("/two", $response->getHeaderLine('Location'),
+            "Redirect URL should match");
+    }
+
     // -----------------------------------------------------------------------------------------------------------------
     // Code samples from docs
 

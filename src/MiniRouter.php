@@ -88,6 +88,26 @@ class MiniRouter
         return $this->register($path, [$controllerClass, $methodName]);
     }
 
+    /**
+     * Registers a simple 301/302 redirect for a given path.
+     *
+     * @param string $path The path of the request URI, optionally with variables, e.g. "/user/$id/edit".
+     * @param string $redirectUrl The absolute or relative URL to redirect the user to on route match.
+     * @param bool $permanent If true, use a 301 (Moved Permanently) redirect. If false, use a 302 (Found) redirect.
+     * @return $this
+     */
+    public function registerRedirect(string $path, string $redirectUrl, bool $permanent = false): self
+    {
+        return $this->register($path, function () use ($redirectUrl, $permanent): ResponseInterface {
+            $response = new FallbackResponse(
+                statusCode: $permanent ? 301 : 302,
+                reasonPhrase: $permanent ? "Moved Permanently" : "Found",
+                body: null
+            );
+            return $response->withHeader("Location", $redirectUrl);
+        });
+    }
+
     // -----------------------------------------------------------------------------------------------------------------
     // Routing
 
