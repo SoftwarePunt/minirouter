@@ -13,13 +13,13 @@ class FallbackResponse implements ResponseInterface
     private string $protocolVersion;
     private array $headers;
 
-    public function __construct(int $statusCode = 200, string $reasonPhrase = "OK", ?string $body = null)
+    public function __construct(int $statusCode = 200, string $reasonPhrase = "OK", ?string $body = null, ?array $headers = null)
     {
         $this->statusCode = $statusCode;
         $this->reasonPhrase = $reasonPhrase;
         $this->body = new FallbackStringStream($body);
         $this->protocolVersion = "1.1";
-        $this->headers = [];
+        $this->headers = $headers ?? [];
     }
 
     public function getProtocolVersion(): string
