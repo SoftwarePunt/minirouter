@@ -13,12 +13,12 @@ class FallbackStringStream implements StreamInterface
         $this->contents = $contents ?? "";
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->contents;
     }
 
-    public function close()
+    public function close(): void
     {
     }
 
@@ -27,56 +27,56 @@ class FallbackStringStream implements StreamInterface
         return null;
     }
 
-    public function getSize()
+    public function getSize(): ?int
     {
         return null;
     }
 
-    public function tell()
+    public function tell(): int
     {
         return 0;
     }
 
-    public function eof()
+    public function eof(): bool
     {
         return true;
     }
 
-    public function isSeekable()
+    public function isSeekable(): bool
     {
         return false;
     }
 
-    public function seek($offset, $whence = SEEK_SET)
+    public function seek($offset, $whence = SEEK_SET): void
     {
-        return new \RuntimeException('no seek');
+        throw new \RuntimeException('no seek');
     }
 
-    public function rewind()
+    public function rewind(): void
     {
     }
 
-    public function isWritable()
-    {
-        return false;
-    }
-
-    public function write($string)
-    {
-        return new \RuntimeException('no write');
-    }
-
-    public function isReadable()
+    public function isWritable(): bool
     {
         return false;
     }
 
-    public function read($length)
+    public function write($string): int
+    {
+        throw new \RuntimeException('no write');
+    }
+
+    public function isReadable(): bool
+    {
+        return false;
+    }
+
+    public function read($length): string
     {
         return new \RuntimeException('no read');
     }
 
-    public function getContents()
+    public function getContents(): string
     {
         return $this->contents;
     }

@@ -22,29 +22,29 @@ class FallbackResponse implements ResponseInterface
         $this->headers = [];
     }
 
-    public function getProtocolVersion()
+    public function getProtocolVersion(): string
     {
         return $this->protocolVersion;
     }
 
-    public function withProtocolVersion($version)
+    public function withProtocolVersion($version): \Psr\Http\Message\MessageInterface
     {
         $instance = clone $this;
         $instance->protocolVersion = $version;
         return $instance;
     }
 
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }
 
-    public function hasHeader($name)
+    public function hasHeader($name): bool
     {
         return $this->getHeader($name) !== null;
     }
 
-    public function getHeader($name)
+    public function getHeader($name): array
     {
         $caseMapping = array_change_key_case($this->headers, CASE_LOWER);
         $value = $caseMapping[strtolower($name)] ?? null;
@@ -53,50 +53,50 @@ class FallbackResponse implements ResponseInterface
         return [];
     }
 
-    public function getHeaderLine($name)
+    public function getHeaderLine($name): string
     {
-        return $this->getHeader($name)[0] ?? null;
+        return $this->getHeader($name)[0] ?? "";
     }
 
-    public function withHeader($name, $value)
-    {
-        $instance = clone $this;
-        $instance->headers[$name] = $value;
-        return $instance;
-    }
-
-    public function withAddedHeader($name, $value)
+    public function withHeader($name, $value): \Psr\Http\Message\MessageInterface
     {
         $instance = clone $this;
         $instance->headers[$name] = $value;
         return $instance;
     }
 
-    public function withoutHeader($name)
+    public function withAddedHeader($name, $value): \Psr\Http\Message\MessageInterface
+    {
+        $instance = clone $this;
+        $instance->headers[$name] = $value;
+        return $instance;
+    }
+
+    public function withoutHeader($name): \Psr\Http\Message\MessageInterface
     {
         $instance = clone $this;
         unset($instance->headers[$name]);
         return $instance;
     }
 
-    public function getBody()
+    public function getBody(): StreamInterface
     {
         return $this->body;
     }
 
-    public function withBody(StreamInterface $body)
+    public function withBody(StreamInterface $body): \Psr\Http\Message\MessageInterface
     {
         $instance = clone $this;
         $instance->body = new FallbackStringStream($body->__toString());
         return $instance;
     }
 
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
         return $this->statusCode;
     }
 
-    public function withStatus($code, $reasonPhrase = '')
+    public function withStatus($code, $reasonPhrase = ''): ResponseInterface
     {
         $instance = clone $this;
         $instance->statusCode = $code;
@@ -104,7 +104,7 @@ class FallbackResponse implements ResponseInterface
         return $instance;
     }
 
-    public function getReasonPhrase()
+    public function getReasonPhrase(): string
     {
         return $this->reasonPhrase;
     }
