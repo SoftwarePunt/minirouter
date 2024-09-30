@@ -49,7 +49,7 @@
   </component>
   <component name="PhpInterpreters">
     <interpreters>
-      <interpreter id="ef98cadf-34f2-444a-bfef-ea137c1c9260" name="Ubuntu" home="\\wsl$\Ubuntu/usr/bin/php" false="false" debugger_id="php.debugger.XDebug">
+      <interpreter id="ef98cadf-34f2-444a-bfef-ea137c1c9260" name="Ubuntu" home="\\wsl$\Ubuntu/usr/bin/php" auto="false" debugger_id="php.debugger.XDebug">
         <remote_data INTERPRETER_PATH="/usr/bin/php" HELPERS_PATH="" VALID="true" RUN_AS_ROOT_VIA_SUDO="false" DISTRIBUTION_ID="Ubuntu" />
       </interpreter>
     </interpreters>
@@ -141,6 +141,7 @@
   <component name="PhpUnit">
     <phpunit_settings>
       <phpunit_by_interpreter interpreter_id="ef98cadf-34f2-444a-bfef-ea137c1c9260" custom_loader_path="/var/www/configx/vendor/softwarepunt/minirouter/vendor/autoload.php" phpunit_phar_path="" />
+      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/vendor/autoload.php" />
     </phpunit_settings>
   </component>
   <component name="PsalmOptionsConfiguration">
