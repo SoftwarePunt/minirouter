@@ -155,9 +155,13 @@ $response = $router->dispatch($request);
 
 http_response_code($response->getStatusCode());
 
-foreach ($response->getHeaders() as $name => $values) {
-    foreach ($values as $value) {
-        header(sprintf('%s: %s', $name, $value), false);
+foreach ($response->getHeaders() as $name => $headerContent) {
+    if (is_array($headerContent)) {
+        foreach ($headerContent as $value) {
+            header(sprintf('%s: %s', $name, $value), false);
+        }
+    } else {
+        header(sprintf('%s: %s', $name, $headerContent), false);
     }
 }
 
