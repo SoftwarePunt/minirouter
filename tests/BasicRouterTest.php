@@ -103,6 +103,20 @@ class BasicRouterTest extends TestCase
             "dispatch() should return implementation response body (based on variable request)");
     }
 
+    public function testInconsistentVariableRouteThrows()
+    {
+        $router = new MiniRouter();
+
+        $router->register('/callable-route/$urlVar', function (RequestInterface $request, string $urlVar): ResponseInterface {
+            return new Response(body: "echo var: {$urlVar}");
+        });
+
+        $this->expectExceptionMessage("Inconsistent route variable");
+        $router->register('/callable-route/$notSameUrlVar', function (RequestInterface $request, string $urlVar): ResponseInterface {
+            return new Response(body: "echo var: {$urlVar}");
+        });
+    }
+
     public function testDependencyInjection()
     {
         $router = new MiniRouter();

@@ -53,14 +53,20 @@ class MiniRouter
         $routesStep = &$this->routes;
 
         foreach ($pathParts as $pathPart) {
-            $isVariablePart = (str_starts_with($pathPart, '$'));
+            $isVarPart = (str_starts_with($pathPart, '$'));
+            $varName = substr($pathPart, 1); // variable name without $
 
-            if ($isVariablePart) {
+            if ($isVarPart) {
                 if (!isset($routesStep['$'])) {
                     $routesStep['$'] = [];
+                    $routesStep['$']['__name'] = $varName;
+                } else if (($origVarName = $routesStep['$']['__name']) !== $varName) {
+                    throw new \LogicException("Inconsistent route variable: tried to register \"\${$varName}\", but already registered as \"\${$origVarName}\"");
+                } else {
+                    var_dump($origVarName);
+                    var_dump($varName);
                 }
 
-                $routesStep['$']['__name'] = substr($pathPart, 1); // variable name without $
                 $routesStep = &$routesStep['$'];
             } else {
                 if (!isset($routesStep[$pathPart])) {
