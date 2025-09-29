@@ -1,4 +1,7 @@
 # MiniRouter
+
+[![PHPUnit](https://github.com/SoftwarePunt/minirouter/actions/workflows/php.yml/badge.svg)](https://github.com/SoftwarePunt/minirouter/actions/workflows/php.yml)
+
 **A fast and lightweight router for PHP, compatible with [PSR-7](https://www.php-fig.org/psr/psr-7/):**
 
 - ⏩ Super fast request-response routing
