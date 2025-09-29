@@ -10,6 +10,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Setup PHP 8.4
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.4'
+        extensions: ctype, dom, json, libxml, mbstring, phar, tokenizer, xml, xmlwriter
+
     - name: Validate composer.json and composer.lock
       run: composer validate
 
