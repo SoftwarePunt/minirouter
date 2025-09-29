@@ -15,7 +15,7 @@ Install the package using [Composer](https://getcomposer.org/):
 composer require softwarepunt/minirouter
 ```
 
-This package is compatible with PHP 8.2+.
+This package is compatible with PHP 8.4+.
 
 ## Usage
 
