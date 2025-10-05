@@ -62,9 +62,6 @@ class MiniRouter
                     $routesStep['$']['__name'] = $varName;
                 } else if (($origVarName = $routesStep['$']['__name']) !== $varName) {
                     throw new \LogicException("Inconsistent route variable: tried to register \"\${$varName}\", but already registered as \"\${$origVarName}\"");
-                } else {
-                    var_dump($origVarName);
-                    var_dump($varName);
                 }
 
                 $routesStep = &$routesStep['$'];
